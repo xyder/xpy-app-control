@@ -1,9 +1,8 @@
 # xpy-app-control
-=========
-Web based manager for applications written in Python.
 
-----
-# Requirements:
+Web based application manager written in Python, using SqlAlchemy, Flask and some PyQt5.
+
+### Requirements:
 * Place the following libraries in application/static/libs:
 	* boostrap-3.3.20-dist
 	* knockout-3.2.0.js
