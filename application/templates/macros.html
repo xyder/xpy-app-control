@@ -1,0 +1,16 @@
+<!-- macro that will automatically create a form-->
+{% macro render_field(field) %}
+    <div class="control-group">
+        {% if field.widget.input_type != 'checkbox' %}
+            {{ field.label(**{'class':'control-label', 'for': field.name }) }}
+            {{ field(**{'class': 'form-control', 'data-bind': 'value: ' + field.name, 'placeholder': field.label.text })|safe }}
+        {% else %}
+            <div class="checkbox">
+                <label>
+                    {{ field(**{'data-bind': 'checked: ' + field.name })|safe }}
+                    {{ field.label }}
+                </label>
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}

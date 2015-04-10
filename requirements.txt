@@ -1,0 +1,5 @@
+psutil
+sqlalchemy
+flask
+wtforms
+PyQt5

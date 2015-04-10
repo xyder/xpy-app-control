@@ -1,0 +1,99 @@
+#apps_table td.success > span.label {
+    color: black;
+}
+
+#apps_table td.success {
+    border-radius: 5px;
+}
+
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+div.long_cell {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 300px;
+}
+
+#navbar_main_menu > ul > li {
+    margin: 0 5px;
+}
+
+.btn-default-toggle {
+    background-image: linear-gradient(#484E55, #0f1419 60%, #313539);
+}
+
+#pingpong {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    width: 100%;
+    padding: 1px 5px;
+    text-align: right;
+}
+
+#pingpong-text {
+    text-align: right;
+    width: 100%;
+}
+
+#pingpong-user {
+    float: left;
+    color: gray;
+}
+
+#pingpong-username {
+    color: cyan;
+}
+
+.button-wrapper {
+    height: 25px;
+    box-shadow: 0 2px 4px gray;
+    display: inline-block;
+    border: 1px solid #094BC0;
+    border-radius: 5px;
+    padding: 1px 5px;
+    background-color: #097BC0;
+    transition: background-color 0.3s 0.05s ease;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.button-wrapper > a, .button-wrapper > input {
+    display: inline-table;
+    cursor: pointer;
+    text-decoration: none;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.button-wrapper > a > h1, .button-wrapper > input {
+    margin: 0 auto;
+    display: table-cell;
+    vertical-align: middle;
+    color: #f7f8f8;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    font-family: Tahoma, Geneva, sans-serif;
+    border: none;
+    background: transparent;
+    transition: color 0.3s 0.05s ease;
+}
+
+.button-wrapper:hover {
+    background-color: #09ddff;
+    transition: background-color 0.3s 0.05s ease;
+    cursor: pointer;
+}
+
+.button-wrapper:hover > a > h1, .button-wrapper:hover > input {
+    color: #094BC0;
+    transition: color 0.3s 0.05s ease;
+}
+
+.button-wrapper > input {
+    height: auto;
+}

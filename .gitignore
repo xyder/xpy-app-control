@@ -1,0 +1,10 @@
+xpy-app-control_ProjectInfo/
+run.lnk
+application/static/libs/
+*.sqlite
+
+__pycache__
+*.pyc
+/.idea/workspace.xml
+/.idea/dataSources.local.xml
+xpy-app-control.iws
