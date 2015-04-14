@@ -5,6 +5,4 @@ application/static/libs/
 
 __pycache__
 *.pyc
-/.idea/workspace.xml
-/.idea/dataSources.local.xml
-xpy-app-control.iws
+.idea/
