@@ -18,7 +18,7 @@ define(function(){
          * send a request to shut down the server
          */
         self.shutdown = function () {
-            self.controller.ajax(self.controller.BASE_API_SERVER_CMD, 'POST', {command: 'SHUTDOWN'});
+            self.controller.run_rpc_method(self.controller.RPC_SHUTDOWN);
         };
 
         /***

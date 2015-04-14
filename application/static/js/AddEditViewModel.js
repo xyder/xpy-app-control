@@ -55,7 +55,7 @@ define([ 'jquery', 'knockout', 'komapping' ], function($, ko, komapping){
         /***
          * Retrieves the item data from the server and shows the corresponding dialog
          *
-         * @param item_id the item id used to specify which object to fetch
+         * @param [item_id] the item id used to specify which object to fetch
          */
         self.fetch_item = function(item_id){
             // set the view model item id

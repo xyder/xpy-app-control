@@ -1,3 +1,4 @@
+import inspect
 import ntpath
 import os
 from flask.ext.restful import reqparse, fields
@@ -116,3 +117,19 @@ def get_command(file, args=None, in_prompt=False):
             ret += file
         ret += ((' ' + args) if args else '')
         return ret
+
+
+def register_class_to_rpc(mod, mapper):
+    """
+    Maps the methods of a class. This is a rewrite of the add_module function from jsonrpc2 to include static methods.
+
+    It handles bound and static methods, but not class methods.
+
+    :param mod: the class to be mapped.
+
+    :param mapper: the jsonrpc mapper.
+    """
+    name = mod.__name__
+    functions = inspect.getmembers(mod, predicate=inspect.isfunction)
+    for key, value in ((key, value) for key, value in functions if not key.startswith('_') and callable(value)):
+        mapper[name + '.' + key] = value

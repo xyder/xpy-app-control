@@ -31,9 +31,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
 
         /***
          * sets the page elements to expand and show the process list
-         * @param i
-         * @param val
-         * @returns {boolean}
          */
         self.toggle_proc_list = function(i, val){
             var list = $('#proc_list_' + i);
@@ -85,11 +82,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
             if(is_item(this)){
                 // build and send the request
                 // noinspection JSUnresolvedFunction
-                var data = {
-                    command: 'START_APP',
-                    args: this.app_item().id()
-                };
-                self.controller.ajax(self.controller.BASE_API_SERVER_CMD, 'POST', data).done(self.update);
+                self.controller.run_rpc_method(self.controller.RPC_START_CMD, {'app_id': this.app_item().id()});
             } else {
                 console.error('The calling object is not an item of this array.');
             }
@@ -99,30 +92,19 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
          * sends a request to stop a process
          */
         self.stop_process = function () {
-            var data = {};
             // check if this item is from the items array
             if(is_item(this)){
                 // 'this' is an item entry. will stop all associated processes
                 // noinspection JSUnresolvedFunction
-                data =  {
-                    command: 'STOP_APP',
-                    args: this.app_item().id()
-                }
+                self.controller.run_rpc_method(self.controller.RPC_STOP_CMD, {'app_id': this.app_item().id()});
             } else {
                 // double check if 'this' is a process entry. will stop this process only
                 // noinspection JSUnresolvedFunction
                 var pid = this.ProcessId();
                 if(pid){
-                    data = {
-                        command: 'STOP_PROCESS',
-                        args: pid
-                    }
-                } else {
-                    return;
+                    self.controller.run_rpc_method(self.controller.RPC_STOP_PROCESS, {'pid': pid});
                 }
             }
-            // send the stop request
-            self.controller.ajax(self.controller.BASE_API_SERVER_CMD, 'POST', data).done(self.update);
         };
 
         /***

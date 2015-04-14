@@ -1,0 +1,25 @@
+Json request object format:
+    {
+        'method': 'method_name',
+        'id': 'id',
+        ['params': 'params']
+    }
+
+- requests will be sent with the POST method
+- authentication is mandatory
+Fields:
+    method - [REQUIRED][STRING] contains the name of the method to be called
+    id - [REQUIRED][STRING] a unique identifier for the request.
+    params - [OPTIONAL][JSON OBJECT] contains the parameters needed for the method call using a json format
+Methods available (uses no parameters unless specified):
+    shutdown - shuts down the server
+    start_command - executes a start command associated with an application id
+        Accepted parameters:
+            app_id - the application id
+    stop_command - executes a stop command associated with an application id
+        Accepted parameters:
+            app_id - the application id
+    stop_process - sends a termination signal to a process with the specified pid
+        Accepted parameters:
+            pid - the process id
+    check_auth - method that always returns SUCCESS. Use it to check if authentication was validated.

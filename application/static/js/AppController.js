@@ -8,7 +8,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         var self = this;
         // set the server url constants
         self.BASE_API = '/api/v1.0/';
-        self.BASE_API_SERVER_CMD = self.BASE_API + 'server/command';
         self.BASE_API_APPS = self.BASE_API + 'apps';
         self.BASE_API_APPS_DEFAULT = self.BASE_API_APPS + '/default';
         self.BASE_API_APPS_LIST = self.BASE_API_APPS + '/list';
@@ -21,6 +20,15 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         // flag that specifies if the client will perform a refresh
         self.is_refreshing = true;
         self.appsViewModel = new AppsViewModel(self);
+
+        // RPC constants:
+        self.RPC_URL = '/rpc';
+        self.RPC_BASE = 'RPCServer.';
+        self.RPC_SHUTDOWN = self.RPC_BASE + 'shutdown';
+        self.RPC_START_CMD = self.RPC_BASE + 'start_command';
+        self.RPC_STOP_CMD = self.RPC_BASE + 'stop_command';
+        self.RPC_STOP_PROCESS = self.RPC_BASE + 'stop_process';
+        self.RPC_CHECK_AUTH = self.RPC_BASE + 'check_auth';
 
         /***
          * Sets the server status html accordingly
@@ -144,16 +152,26 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
             });
         };
 
+        self.run_rpc_method = function(method, params){
+            var req_object = {
+                'id': Math.floor(Math.random()*1001),
+                'method': method
+            };
+            if( params != undefined ){
+                req_object.params = params;
+            }
+            return self.ajax(self.RPC_URL, 'POST', req_object);
+        };
+
         /***
          * Sets login information and requests server to validate the authentication
          */
         self.login = function (username, password) {
             self.username = username;
             self.password = password;
-            self.ajax(self.BASE_API_SERVER_CMD, 'POST', {command: 'CHECK_AUTH'})
-                .done(function () {
-                    self.set_login_status(true);
-                });
+            self.run_rpc_method(self.RPC_CHECK_AUTH).done(function(){
+                self.set_login_status(true);
+            });
         };
     };
 });

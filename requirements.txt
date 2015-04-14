@@ -1,3 +1,4 @@
+jsonrpc2
 psutil
 sqlalchemy
 flask
