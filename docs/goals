@@ -1,0 +1,5 @@
+- add folders/categories for applications
+- use https whenver possible and needed
+- use command sanitation to prevent shell injection, or warn about it
+- add test units for server and client (perhaps use Jasmine)
+- use components to modularize Knockout code
