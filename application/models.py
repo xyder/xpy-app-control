@@ -1,6 +1,7 @@
 from application import db
 from wtforms.widgets import TextInput
 from application.libs.helper_functions import get_command
+from config import ActiveConfig
 
 
 class AppItem(db.Model):
@@ -56,6 +57,12 @@ class AppItem(db.Model):
             AppItem.check_cmd.key: {'label': 'Compare term with command line (executable path and args)'},
             AppItem.check_name.key: {'label': 'Compare term with image name (usually the executable file name)'}
         }
+
+    @property
+    def url(self):
+        return 'http://' + ActiveConfig.SERVER_NAME\
+               + ActiveConfig.REST_URL_APPS\
+               + '/' + ('' if self.id is None else str(self.id))
 
     def get_start_command(self):
         """

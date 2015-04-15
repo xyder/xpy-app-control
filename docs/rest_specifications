@@ -1,0 +1,23 @@
+base-api-url = <server-url>/api/<api-version>/apps
+
+REST API endpoints:
+<base-api-url>
+    Methods allowed:
+        GET - will return a default, empty application item that can be used as a template for adding/editing operations
+            Alternate formats:
+                <base-api-url>/
+                <base-api-url>/default
+        POST - will add a new application item to the database
+            Alternate formats:
+                <base-api-url>/
+                <base-api-url>/add
+
+<base-api-url>/<item-id>
+    Note: <item-id> must be an existing application item id from the database
+    Methods allowed:
+        PUT - will update the item with the given id
+        GET - will return the item with the given id
+
+<base-api-url>/list
+    Methods allowed:
+        GET - will return a list of all application items in the database

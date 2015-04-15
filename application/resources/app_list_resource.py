@@ -4,7 +4,7 @@ from psutil import Process
 import psutil
 from application.libs.helper_functions import fields_str_from_keys, str_to_pair
 from application.models import AppItem
-from application.resources import app_fields
+from application.resources import app_fields_extended
 
 
 class AppListResource(Resource):
@@ -24,7 +24,7 @@ class AppListResource(Resource):
     processes_fields_extended = processes_fields.copy()
     processes_fields_extended['ProcMem'] = fields.Integer
     app_list_fields = {
-        'app_item': fields.Nested(app_fields),
+        'app_item': fields.Nested(app_fields_extended),
         'proc_no': fields.Integer,
         'proc_mem_total': fields.Integer,
         'proc_list': fields.Nested(processes_fields_extended)

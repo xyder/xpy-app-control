@@ -55,7 +55,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
                 // checking if this is called from an element from self.items
                 if(is_item(this)){
                     // noinspection JSUnresolvedFunction
-                    self.addVM.fetch_item(this.app_item().id());
+                    self.addVM.fetch_item(this.app_item().url());
                 } else {
                     console.error('The calling object is not the root or an item of this array.');
                 }
@@ -68,7 +68,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
         self.remove = function () {
             if(is_item(this)){
                 // noinspection JSUnresolvedFunction
-                self.controller.ajax(self.controller.BASE_API_APPS + '/' + this.app_item().id(), 'DELETE').done(self.update);
+                self.controller.ajax(this.app_item().url(), 'DELETE').done(self.update);
             } else {
                 console.error('The calling object is not an item of this array.');
             }

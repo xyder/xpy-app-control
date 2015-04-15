@@ -6,11 +6,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
     ko.mapper = komapping;
     return function(){
         var self = this;
-        // set the server url constants
-        self.BASE_API = '/api/v1.0/';
-        self.BASE_API_APPS = self.BASE_API + 'apps';
-        self.BASE_API_APPS_LIST = self.BASE_API_APPS + '/list';
-        self.BASE_API_APPS_ADD = self.BASE_API_APPS + '/add';
     
         self.username = '';
         self.password = '';
@@ -19,6 +14,9 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         // flag that specifies if the client will perform a refresh
         self.is_refreshing = true;
         self.appsViewModel = new AppsViewModel(self);
+
+        // REST constants:
+        self.REST_API_URL = '/api/v1.0/apps';
 
         // RPC constants:
         self.RPC_URL = '/rpc';
@@ -55,7 +53,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
                 $("#pingpong-text").html(str);
 
                 // refresh the app list
-                self.ajax(self.BASE_API_APPS_LIST, 'GET').done(function (data) {
+                self.ajax(self.REST_API_URL + '/list', 'GET').done(function (data) {
                     // fetch data and fill array
                     if(self.appsViewModel.initial_load_done){
                         // update the view model

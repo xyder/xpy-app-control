@@ -2,7 +2,7 @@ from flask.ext.restful import Resource, abort, marshal_with
 from application import auth, db
 from application.libs.helper_functions import str_to_bool
 from application.models import AppItem
-from application.resources import app_fields, parser
+from application.resources import app_fields, app_fields_extended, parser
 
 
 class AppResource(Resource):
@@ -33,7 +33,7 @@ class AppResource(Resource):
                         setattr(app_item, field, parsed_args[field])
         return app_item
 
-    @marshal_with(app_fields)
+    @marshal_with(app_fields_extended)
     def get(self, id_app=''):
         """
         Endpoint that responds to a GET request with a specified application item.
@@ -85,13 +85,13 @@ class AppResource(Resource):
 
     @auth.login_required
     @marshal_with(app_fields)
-    def post(self, id_app):
+    def post(self, id_app=''):
         """
         Endpoint that adds a new application item.
         :param id_app: Can only be 'add' to restrict the viable URL path.
         :return:
         """
-        if id_app != 'add':
+        if id_app != 'add' and id_app != '':
             abort(404, message='Command {} not allowed.'.format(id_app))
 
         # fill the application item with the given arguments
