@@ -68,7 +68,7 @@ define([ 'jquery', 'knockout', 'komapping' ], function($, ko, komapping){
             } else {
                 // fetch a default item from the server and use it to build the add form
                 $('#add_dialog_label').html('Add Application');
-                self.controller.ajax(self.controller.BASE_API_APPS_DEFAULT).done(fill_and_show);
+                self.controller.ajax(self.controller.BASE_API_APPS).done(fill_and_show);
             }
         }
     };

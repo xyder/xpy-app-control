@@ -22,7 +22,8 @@ app = Flask(__name__)
 app.config.from_object(ActiveConfig)
 
 # set up logger level
-logging.getLogger('werkzeug').setLevel(logging.WARNING)
+if not app.debug:
+    logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
 # open and intialize or read the database
 db = SQLAlchemy(app)
@@ -37,6 +38,10 @@ from application.resources.app_list_resource import AppListResource
 # set the rest endpoints
 rest_api = Api(app)
 rest_api.add_resource(AppListResource,
-                      ActiveConfig.REST_URL_APPS_LIST, endpoint='api.apps.list')
+                      ActiveConfig.REST_URL_APPS_LIST,
+                      ActiveConfig.REST_URL_APPS_LIST + '/')
 rest_api.add_resource(AppResource,
-                      ActiveConfig.REST_URL_APPS_ITEM, endpoint='api.apps.item')
+                      ActiveConfig.REST_URL_APPS_ITEM,
+                      ActiveConfig.REST_URL_APPS,
+                      ActiveConfig.REST_URL_APPS + '/')
+

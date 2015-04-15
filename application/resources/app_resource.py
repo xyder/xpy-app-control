@@ -34,7 +34,7 @@ class AppResource(Resource):
         return app_item
 
     @marshal_with(app_fields)
-    def get(self, id_app):
+    def get(self, id_app=''):
         """
         Endpoint that responds to a GET request with a specified application item.
 
@@ -42,7 +42,7 @@ class AppResource(Resource):
 
         :return: The specified application item.
         """
-        if id_app == 'default':
+        if id_app == 'default' or id_app == '':
             return AppItem()
         app_item = AppItem.query.get(id_app)
         if not app_item:

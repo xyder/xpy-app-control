@@ -27,7 +27,6 @@ class AppConfig(object):
 
     REST_URL_BASE = '/api/v1.0'
     REST_URL_APPS = REST_URL_BASE + '/apps'
-    REST_URL_SERVER_CMD = REST_URL_BASE + '/server/command'
     REST_URL_APPS_LIST = REST_URL_APPS + '/list'
     REST_URL_APPS_ITEM = REST_URL_APPS + '/<id_app>'
 

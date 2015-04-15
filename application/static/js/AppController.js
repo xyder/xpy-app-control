@@ -9,7 +9,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         // set the server url constants
         self.BASE_API = '/api/v1.0/';
         self.BASE_API_APPS = self.BASE_API + 'apps';
-        self.BASE_API_APPS_DEFAULT = self.BASE_API_APPS + '/default';
         self.BASE_API_APPS_LIST = self.BASE_API_APPS + '/list';
         self.BASE_API_APPS_ADD = self.BASE_API_APPS + '/add';
     
