@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.restful import Api
@@ -19,6 +20,9 @@ auth = HTTPBasicAuth()
 # initialize and configure the flask server
 app = Flask(__name__)
 app.config.from_object(ActiveConfig)
+
+# set up logger level
+logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
 # open and intialize or read the database
 db = SQLAlchemy(app)
