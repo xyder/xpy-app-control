@@ -1,22 +1,20 @@
-from PyQt5 import QtCore
 import sys
 import webbrowser
-from PyQt5.QtCore import QThread
 
-from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QApplication, QAction
+from PySide import QtCore, QtGui
+from PySide.QtGui import QSystemTrayIcon
 
 from config import *
 
 
-class FlaskThread(QThread):
+class FlaskThread(QtCore.QThread):
     """
     Class that defines the main flask server thread.
     """
     from application import app
     server_app = app
 
-    exit_signal = QtCore.pyqtSignal()
+    exit_signal = QtCore.Signal()
 
     def __init__(self):
         super(FlaskThread, self).__init__()
@@ -49,27 +47,36 @@ class SystemTrayIcon(QSystemTrayIcon):
 
     def __init__(self, icon, parent=None):
         QSystemTrayIcon.__init__(self, icon, parent)
-        menu = QMenu(parent)
+        self.menu = QtGui.QMenu(parent)
 
         # initialize and add the open webpage menu item
-        launch_action = QAction('&Open Webpage', self)
-        launch_action.setToolTip('Server is @ ' + ActiveConfig.SERVER_NAME)
+        launch_action = QtGui.QAction('&Open Webpage', self)
+        launch_action.setToolTip('Server is @ ' + ActiveConfig.SERVER_NAME + '.')
         launch_action.triggered.connect(self.launch_slot)
-        menu.addAction(launch_action)
+        self.menu.addAction(launch_action)
 
-        menu.addSeparator()
+        self.menu.addSeparator()
 
         # initialize and add the exit application menu item
-        exit_action = QAction('&Exit', self)
+        exit_action = QtGui.QAction('&Exit', self)
+        exit_action.setToolTip('This is the exit.')
         exit_action.triggered.connect(self.exit_slot)
-        menu.addAction(exit_action)
+        self.menu.addAction(exit_action)
 
-        menu.setToolTipsVisible(True)
-        self.setContextMenu(menu)
+        # menu.setToolTipsVisible(True)
+        self.setContextMenu(self.menu)
 
         # connect signals
+        self.menu.hovered.connect(self.menu_hovered_slot)
         self.activated.connect(self.tray_activated_slot)
         self.server_thread.connect_exit_signal_to_slot(self.exit_slot)
+
+    def menu_hovered_slot(self, action):
+        QtGui.QToolTip.showText(
+            QtGui.QCursor.pos(),
+            action.toolTip(),
+            self.menu, self.menu.actionGeometry(action)
+        )
 
     @staticmethod
     def launch_slot():
@@ -90,7 +97,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
     def tray_activated_slot(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.contextMenu().popup(QCursor.pos())
+            self.contextMenu().popup(QtGui.QCursor.pos())
             self.contextMenu().activateWindow()
 
     def start(self):
@@ -102,7 +109,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
 
 def main():
-    qapp = QApplication(sys.argv)
-    tray_icon = SystemTrayIcon(QIcon(os.path.join(PathsConfig.ICONS_DIR, 'app-icon-on.ico')))
+    qapp = QtGui.QApplication(sys.argv)
+    tray_icon = SystemTrayIcon(QtGui.QIcon(os.path.join(PathsConfig.ICONS_DIR, 'app-icon-on.ico')))
     tray_icon.start()
-    sys.exit(qapp.exec())
+    sys.exit(qapp.exec_())
