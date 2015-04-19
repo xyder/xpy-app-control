@@ -1,7 +1,67 @@
+from wtforms import validators
 from application import db
-from wtforms.widgets import TextInput
+from wtforms.widgets import TextInput, PasswordInput
 from application.libs.helper_functions import get_command
 from config import ActiveConfig
+
+
+class User(db.Model):
+    """
+    User Model - matches an user item from the database
+    """
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.Text, index=True)
+    last_name = db.Column(db.Text, index=True)
+    username = db.Column(db.Text, unique=True, index=True)
+    password = db.Column(db.Text)
+
+    def __init__(self):
+        self.first_name = ''
+        self.last_name = ''
+        self.username = ''
+        self.password = ''
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.username
+
+    @property
+    def field_args_register(self):
+        """
+        Gets the field arguments for the automatic form creation.
+        """
+        return {
+            User.first_name.key: {'widget': TextInput(), 'label': 'First Name'},
+            User.last_name.key: {'widget': TextInput(), 'label': 'Last Name'},
+            User.username.key: {'widget': TextInput(), 'label': 'Username',
+                                'validators': [validators.DataRequired()]},
+            User.password.key: {'widget': PasswordInput(), 'label': 'Password',
+                                'validators': [validators.DataRequired(),
+                                               validators.EqualTo('confirm', message='Password must match.')]}
+        }
+
+    @property
+    def get_full_name(self):
+        if self.first_name:
+            if self.last_name:
+                return self.first_name + ' ' + self.last_name
+            else:
+                return self.first_name
+        else:
+            return self.last_name or self.username
 
 
 class AppItem(db.Model):
