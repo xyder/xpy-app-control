@@ -5,8 +5,12 @@ from werkzeug.security import generate_password_hash
 from application import db, views, models
 from config import ActiveConfig
 
-# initialize database if necessary
+
 def init_db():
+    """
+    Initializes data in the database if necessary.
+    """
+
     # will create database and tables if not exist
     db.create_all()
 
@@ -26,25 +30,40 @@ def init_db():
 
 # initialize flask login
 def init_login(app_):
+    """
+    Initializes flask-login related objects.
+
+    :param app_: The Flask instance.
+    """
+
     login_manager = LoginManager()
     login_manager.init_app(app_)
 
-    # create user loader function
     @login_manager.user_loader
     def load_user(user_id):
         return models.User.query.get(user_id)
 
 
-# initalize flask admin
 def init_admin(app_):
+    """
+    Initializes flask-admin related objects.
+
+    :param app_: The Flask instance.
+    """
+
     admin = Admin(app_, ActiveConfig.APP_NAME, index_view=views.AdminMainView())
 
     admin.add_view(views.AdminModelView(models.AppItem, db.session, name='Applications'))
-    admin.add_view(views.AdminModelView(models.User, db.session, name='Users'))
+    admin.add_view(views.AdminUserModelView(models.User, db.session, name='Users'))
 
 
-# initialize rest interface
 def init_rest(app_):
+    """
+    Initializes Flask-Restful related objects and server resources.
+
+    :param app_: The Flask instance.
+    """
+
     from application.resources.app_resource import AppResource
     from application.resources.app_list_resource import AppListResource
 
