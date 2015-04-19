@@ -1,4 +1,3 @@
-from flask.ext.login import UserMixin
 from wtforms import validators
 from application import db
 from wtforms.widgets import TextInput, PasswordInput
@@ -6,7 +5,7 @@ from application.libs.helper_functions import get_command
 from config import ActiveConfig
 
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     """
     User Model - matches an user item from the database
     """
@@ -23,8 +22,24 @@ class User(db.Model, UserMixin):
         self.username = ''
         self.password = ''
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.username
+
     @property
-    def field_args(self):
+    def field_args_register(self):
         """
         Gets the field arguments for the automatic form creation.
         """
@@ -37,6 +52,16 @@ class User(db.Model, UserMixin):
                                 'validators': [validators.DataRequired(),
                                                validators.EqualTo('confirm', message='Password must match.')]}
         }
+
+    @property
+    def get_full_name(self):
+        if self.first_name:
+            if self.last_name:
+                return self.first_name + ' ' + self.last_name
+            else:
+                return self.first_name
+        else:
+            return self.last_name or self.username
 
 
 class AppItem(db.Model):

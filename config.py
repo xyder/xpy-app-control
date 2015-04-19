@@ -30,6 +30,8 @@ class AppConfig(object):
     REST_URL_APPS_LIST = REST_URL_APPS + '/list'
     REST_URL_APPS_ITEM = REST_URL_APPS + '/<id_app>'
 
+    APP_NAME = 'Application Control'
+
 
 class TestingConfig(AppConfig):
     """

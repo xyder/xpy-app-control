@@ -3,7 +3,7 @@
 <html>
 <head lang="en">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if params.title %}{{ params.title }} - {% endif %}XDR Flask Server</title>
+    <title>{{ params.title + " - " + app_config.APP_NAME }}</title>
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='libs/bootstrap-3.3.2-dist/css/bootstrap.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
@@ -34,7 +34,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand navbar-btn" href="{{ url_for('index') }}">XPy App Control</a>
+                <a class="navbar-brand navbar-btn" href="{{ url_for('index') }}">{{ app_config.APP_NAME }}</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
