@@ -22,7 +22,7 @@ class AppConfig(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'data.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(PathsConfig.BASE_DIR, 'db_repository')
 
-    WTF_CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = False
     SECRET_KEY = "this is a secret key"
 
     REST_URL_BASE = '/api/v1.0'
