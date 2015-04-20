@@ -39,10 +39,10 @@
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar_main_menu">
-                <div class="nav navbar-form navbar-right btn-group btn-group-sm">
-                    <button type="button" id="refresh_switch" class="btn btn-default navbar-btn btn-default-toggle" data-bind="click: toggle_refresh">Toggle Refresh</button>
-                    <button type="button" class="btn btn-default navbar-btn" data-bind="click: shutdown">Shutdown</button>
-                    <button type="button" class="btn btn-default navbar-btn" data-bind="click: login" id="login_button">Login</button>
+                <div class="nav navbar-form navbar-right btn-group">
+                    <a id="refresh_switch" class="btn btn-default navbar-btn btn-default-toggle" data-bind="click: toggle_refresh">Toggle Refresh</a>
+                    <a class="btn btn-default navbar-btn" href="/admin">Admin</a>
+                    <a class="btn btn-default navbar-btn" data-bind="click: login" id="login_button">Login</a>
                 </div>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
