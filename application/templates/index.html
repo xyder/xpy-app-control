@@ -1,4 +1,4 @@
-{% from 'macros.html' import render_field %}
+{% from 'macros.html' import render_field, flash_messages %}
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -47,6 +47,8 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
+
+    {{ flash_messages() }}
 
     <!-- container for the application items list -->
     <div id="apps_container" class="container">

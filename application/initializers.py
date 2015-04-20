@@ -15,7 +15,6 @@ def init_db():
     db.create_all()
 
     # will append a default user if none exist
-    # TODO: flash warning message about the existence of a potential security risk.
     if models.User.query.count() == 0:
         default_user = models.User()
 

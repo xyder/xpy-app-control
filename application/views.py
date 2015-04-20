@@ -1,21 +1,34 @@
-from flask import render_template, request, jsonify, url_for, redirect
+from flask import render_template, request, jsonify, url_for, redirect, flash
 from flask.ext.admin import AdminIndexView, expose, helpers
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.wtf import Form
 import flask.ext.login as login
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.ext.sqlalchemy.orm import model_form
 
 from application import app, db, auth, mapper
 from application.forms import LoginForm, UserCreateForm, UserEditForm
 from config import ActiveConfig
-from .models import AppItem
+from .models import AppItem, User
+
+
+def check_errors():
+    """
+    Checks if there are any application level errors.
+
+    :return: True if there are errors.
+    """
+    user = User.query.filter_by(username='admin').first()
+    # true when user exists and password is set to default
+    if user is not None and check_password_hash(user.password, 'password'):
+        flash('Warning: Change default login info to something unique to prevent a potential security risk.')
 
 
 class AdminMainView(AdminIndexView):
 
     @expose('/')
     def index(self):
+        check_errors()
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
         return super(AdminMainView, self).index()
@@ -45,6 +58,7 @@ class AdminModelView(ModelView):
         return login.current_user.is_authenticated()
 
     def _handle_view(self, name, **kwargs):
+        check_errors()
         if not self.is_accessible():
             return redirect(url_for('admin.login_view', next=request.url))
 
@@ -78,6 +92,9 @@ def index():
 
     :return: the template to be served to the client
     """
+
+    check_errors()
+
     params = {'title': 'Main'}
     app_item = AppItem()
     # crates a model class from the application item

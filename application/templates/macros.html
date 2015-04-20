@@ -14,3 +14,15 @@
         {% endif %}
     </div>
 {% endmacro %}
+
+{%  macro flash_messages() %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul style="list-style-type: none;">
+                {% for message in messages %}
+                    <li class="alert">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endmacro %}
