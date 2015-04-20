@@ -92,22 +92,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         };
 
         /***
-         * Fills the correesponding page elements with information regarding login state.
-         * @param val boolean that determines if logged on or off.
-         */
-        self.set_login_status = function (val) {
-            if (val) {
-                $('#pingpong-user').html('Logged in as <span id="pingpong-username">' + self.username + '</span>');
-                $('#login_button').html('Logout');
-                self.is_logged_in = true;
-            } else {
-                $('#pingpong-user').html('Not Logged In');
-                $('#login_button').html('Login');
-                self.is_logged_in = false;
-            }
-        };
-
-        /***
          * Performs an ajax call to the specified uri with the given method and data
          * @param uri path to be used in the ajax call
          * @param method http method to be used
@@ -135,7 +119,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
                     // unauthorized
                     403: function(jqXHR){
                         if (jqXHR.status == 403) {
-                            self.set_login_status(false);
                             $('#login').modal('show');
                         } else {
                             console.log('Ajax error code: ' + jqXHR.status);
@@ -166,9 +149,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         self.login = function (username, password) {
             self.username = username;
             self.password = password;
-            self.run_rpc_method(self.RPC_CHECK_AUTH).done(function(){
-                self.set_login_status(true);
-            });
+            self.run_rpc_method(self.RPC_CHECK_AUTH);
         };
     };
 });

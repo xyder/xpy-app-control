@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, url_for, redirect, flash
+from flask import render_template, request, jsonify, url_for, redirect, flash, make_response
 from flask.ext.admin import AdminIndexView, expose, helpers
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.wtf import Form
@@ -6,7 +6,7 @@ import flask.ext.login as login
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.ext.sqlalchemy.orm import model_form
 
-from application import app, db, auth, mapper
+from application import app, db, mapper
 from application.forms import LoginForm, UserCreateForm, UserEditForm
 from config import ActiveConfig
 from .models import AppItem, User
@@ -30,7 +30,7 @@ class AdminMainView(AdminIndexView):
     def index(self):
         check_errors()
         if not login.current_user.is_authenticated():
-            return redirect(url_for('.login_view'))
+            return redirect(url_for('.login_view', next=request.url))
         return super(AdminMainView, self).index()
 
     @expose('/login', methods=('GET', 'POST'))
@@ -41,7 +41,7 @@ class AdminMainView(AdminIndexView):
             login.login_user(user)
 
         if login.current_user.is_authenticated():
-            return redirect(url_for('.index'))
+            return redirect(request.args.get('next') or '/')
 
         self._template_args['form'] = req_form
         return super(AdminMainView, self).index()
@@ -49,7 +49,7 @@ class AdminMainView(AdminIndexView):
     @expose('/logout')
     def logout_view(self):
         login.logout_user()
-        return redirect(url_for('.index'))
+        return redirect(request.args.get('next') or '/')
 
 
 class AdminModelView(ModelView):
@@ -103,8 +103,11 @@ def index():
 
 
 @app.route('/rpc', methods=['POST'])
-@auth.login_required
 def rpc():
+    if not login.current_user.is_authenticated():
+        # return 403, not 401 to prevent browsers from displaying the default auth dialog
+        return make_response(jsonify({'Status': 'Unauthorized access.'}), 403)
+
     # Request format: {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
 
     # providing a safe failure in case the json is None

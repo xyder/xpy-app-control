@@ -1,4 +1,14 @@
+body {
+    font-family: Tahoma,Geneva,sans-serif;
+}
+
 ul.input-errors {
     list-style-type: none;
     display: none;
+}
+
+p.header-user {
+    text-align: right;
+    width: auto;
+    padding: 10px;
 }

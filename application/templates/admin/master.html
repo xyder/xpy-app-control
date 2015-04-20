@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block page_body %}
-    <p style="text-align: right; width: auto; padding-right:10px">
+    <p class="header-user">
     {% if current_user.is_authenticated() %}
         Logged in as <span style="font-weight: bold">{{ current_user.get_full_name }}</span>.
     {% else %}

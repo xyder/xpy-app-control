@@ -28,7 +28,6 @@ define(function(){
             if (self.controller.is_logged_in) {
                 self.controller.username = '';
                 self.controller.password = '';
-                self.controller.set_login_status(false);
             } else {
                 $('#login').modal('show');
             }
