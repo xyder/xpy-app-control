@@ -30,8 +30,14 @@ class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_n
         return User.query.filter_by(username=self.username.data).first()
 
 
-class UserCreateForm(model_form(User, base_class=Form, field_args=User.get_field_args_create())):
+class UserEditForm(model_form(User, base_class=Form, field_args=User.get_field_args_create())):
+
     confirm = PasswordField('Repeat Password')
+
+    def get_user(self):
+        return User.query.filter_by(username=self.username.data).first()
+
+class UserCreateForm(UserEditForm):
 
     def validate_username(self, field):
         del field
@@ -39,6 +45,3 @@ class UserCreateForm(model_form(User, base_class=Form, field_args=User.get_field
         user = self.get_user()
         if user is not None:
             raise validators.ValidationError('Username already exists.')
-
-    def get_user(self):
-        return User.query.filter_by(username=self.username.data).first()

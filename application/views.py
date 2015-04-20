@@ -3,10 +3,11 @@ from flask.ext.admin import AdminIndexView, expose, helpers
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.wtf import Form
 import flask.ext.login as login
+from werkzeug.security import generate_password_hash
 from wtforms.ext.sqlalchemy.orm import model_form
 
 from application import app, db, auth, mapper
-from application.forms import LoginForm, UserCreateForm
+from application.forms import LoginForm, UserCreateForm, UserEditForm
 from config import ActiveConfig
 from .models import AppItem
 
@@ -49,8 +50,23 @@ class AdminModelView(ModelView):
 
 
 class AdminUserModelView(AdminModelView):
+
+    # set the passwords to be masked
+    column_formatters = dict(password=lambda v, c, m, p: '* * * * *')
+
     def create_form(self, obj=None):
         return UserCreateForm()
+
+    def edit_form(self, obj=None):
+        return UserEditForm(obj=obj)
+
+    def create_model(self, form):
+        form.password.data = generate_password_hash(form.password.data)
+        return super(AdminUserModelView, self).create_model(form)
+
+    def update_model(self, form, model):
+        form.password.data = generate_password_hash(form.password.data)
+        return super(AdminUserModelView, self).update_model(form, model)
 
 
 # application endpoints
