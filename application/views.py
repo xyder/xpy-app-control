@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.ext.sqlalchemy.orm import model_form
 
 from application import app, db, mapper
+from application.authentication import Authentication
 from application.forms import LoginForm, UserCreateForm, UserEditForm
 from config import ActiveConfig
 from .models import AppItem, User
@@ -18,9 +19,9 @@ def check_errors():
 
     :return: True if there are errors.
     """
-    user = User.query.filter_by(username='admin').first()
-    # true when user exists and password is set to default
-    if user is not None and check_password_hash(user.password, 'password'):
+
+    # true when ('admin','password') is present
+    if Authentication.check_authorization('admin', 'password'):
         flash('Warning: Change default login info to something unique to prevent a potential security risk.')
 
 
@@ -103,6 +104,7 @@ def index():
 
 
 @app.route('/rpc', methods=['POST'])
+@Authentication.login_required
 def rpc():
     """
     Endpoint for the RPC requests server.
@@ -115,23 +117,17 @@ def rpc():
         return make_response(jsonify({'Status': 'No data received.'}), 400)
 
     # check if all necessary fields are present
-    required_fields = ['id', 'method', 'username', 'password']
+    required_fields = ['id', 'method']
     for field in required_fields:
         if field not in request.json:
             return make_response(jsonify({'Status': 'Field <' + field + '> not specified.'}), 400)
 
-    # validate user
-    user = User.query.filter_by(username=request.json['username']).first()
-    if user is None or not check_password_hash(user.password, request.json['password']):
-        # return 403, not 401 to prevent browsers from displaying the default auth dialog
-        return make_response(jsonify({'Status': 'Unauthorized access.'}), 403)
-
     # Request format: {
-    #       "jsonrpc": "2.0",
-    #       "username": "username",
-    #       "password": "password",
+    #       ["jsonrpc": "2.0",]
+    #       ["username": "username",]
+    #       ["password": "password",]
     #       "method": methodname,
-    #       "params": params,
+    #       ["params": params,]
     #       "id": 1
     # }
 

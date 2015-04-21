@@ -1,5 +1,6 @@
 from flask.ext.restful import Resource, abort, marshal_with
-from application import auth, db
+from application import db
+from application.authentication import Authentication
 from application.libs.helper_functions import str_to_bool
 from application.models import AppItem
 from application.resources import app_fields, app_fields_extended, parser
@@ -50,7 +51,7 @@ class AppResource(Resource):
         return app_item
 
     @staticmethod
-    @auth.login_required
+    @Authentication.login_required
     def delete(id_app):
         """
         Endpoit that responds to a DELETE request and removes a specified application item from the
@@ -65,7 +66,7 @@ class AppResource(Resource):
         db.session.commit()
         return {}, 204
 
-    @auth.login_required
+    @Authentication.login_required
     @marshal_with(app_fields)
     def put(self, id_app):
         """
@@ -83,7 +84,7 @@ class AppResource(Resource):
         db.session.commit()
         return app_item, 201
 
-    @auth.login_required
+    @Authentication.login_required
     @marshal_with(app_fields)
     def post(self, id_app=''):
         """

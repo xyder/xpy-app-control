@@ -7,6 +7,9 @@ from application.models import User
 
 class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_name'],
                            field_args=User.get_field_args_login())):
+    """
+    Class representing the form handling authentication in the admin area.
+    """
 
     def validate_username(self, field):
         del field
@@ -31,13 +34,20 @@ class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_n
 
 
 class UserEditForm(model_form(User, base_class=Form, field_args=User.get_field_args_create())):
+    """
+    Class representing the form handling the user editing from the admin area.
+    """
 
     confirm = PasswordField('Repeat Password')
 
     def get_user(self):
         return User.query.filter_by(username=self.username.data).first()
 
+
 class UserCreateForm(UserEditForm):
+    """
+    Class representing the form handling the user creating from the admin area.
+    """
 
     def validate_username(self, field):
         del field

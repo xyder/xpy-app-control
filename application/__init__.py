@@ -1,16 +1,12 @@
 import logging
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.httpauth import HTTPBasicAuth
 from jsonrpc2 import JsonRpc
 
 from application.libs.helper_functions import register_class_to_rpc
 from application.rpc_server import RPCServer
 
 from config import ActiveConfig
-
-# initalize the authentication
-auth = HTTPBasicAuth()
 
 # initialize and configure the flask server
 app = Flask(__name__)

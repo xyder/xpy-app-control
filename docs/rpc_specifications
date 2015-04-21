@@ -11,7 +11,9 @@ Json request object format:
 - authentication is mandatory
 Fields:
     username - [REQUIRED][STRING] contains the username used for authentification
+        Alternatively, can be specified in the authorization header of the request
     password - [REQUIRED[STRING] contains the password used for authentification
+        Alternatively, can be specified in the authorization header of the request
     method - [REQUIRED][STRING] contains the name of the method to be called
     id - [REQUIRED][STRING] a unique identifier for the request.
     params - [OPTIONAL][JSON OBJECT] contains the parameters needed for the method call using a json format

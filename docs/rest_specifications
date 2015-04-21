@@ -1,3 +1,6 @@
+Note: For operations other than GET, authentication is required either by adding the credentials to
+an authentication header or to an json object attached to the request.
+
 base-api-url = <server-url>/api/<api-version>/apps
 
 REST API endpoints:
