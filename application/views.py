@@ -104,19 +104,43 @@ def index():
 
 @app.route('/rpc', methods=['POST'])
 def rpc():
-    if not login.current_user.is_authenticated():
+    """
+    Endpoint for the RPC requests server.
+
+    :return: The generated response in JSON format.
+    """
+
+    # check if json data was sent
+    if request.json is None:
+        return make_response(jsonify({'Status': 'No data received.'}), 400)
+
+    # check if all necessary fields are present
+    required_fields = ['id', 'method', 'username', 'password']
+    for field in required_fields:
+        if field not in request.json:
+            return make_response(jsonify({'Status': 'Field <' + field + '> not specified.'}), 400)
+
+    # validate user
+    user = User.query.filter_by(username=request.json['username']).first()
+    if user is None or not check_password_hash(user.password, request.json['password']):
         # return 403, not 401 to prevent browsers from displaying the default auth dialog
         return make_response(jsonify({'Status': 'Unauthorized access.'}), 403)
 
-    # Request format: {"jsonrpc": "2.0", "method": methodname, "params": params, "id": 1}
+    # Request format: {
+    #       "jsonrpc": "2.0",
+    #       "username": "username",
+    #       "password": "password",
+    #       "method": methodname,
+    #       "params": params,
+    #       "id": 1
+    # }
 
-    # providing a safe failure in case the json is None
-    json_obj = {"jsonrpc": "2.0", "method": None, "id": 0}
+    # override to prevent needless verbosity
+    request.json['jsonrpc'] = request.json['jsonrpc'] if 'jsonrpc' in request.json else '2.0'
 
-    if request.json is not None:
-        json_obj = request.json
+    ret_data = mapper(request.json)
+    code = 200
+    if 'result' in ret_data and 'code' in ret_data['result']:
+        code = ret_data['result']['code']
 
-        # override to prevent needless verbosity
-        json_obj['jsonrpc'] = json_obj['jsonrpc'] if 'jsonrpc' in json_obj else '2.0'
-    data = mapper(json_obj)
-    return jsonify(data)
+    return make_response(jsonify(ret_data), code)
