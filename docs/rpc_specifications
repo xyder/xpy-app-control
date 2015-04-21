@@ -1,13 +1,17 @@
 Json request object format:
     {
+        'username': 'user_name',
+        'password': 'password',
         'method': 'method_name',
         'id': 'id',
-        ['params': 'params']
+        ['params': {params}]
     }
 
 - requests will be sent with the POST method
 - authentication is mandatory
 Fields:
+    username - [REQUIRED][STRING] contains the username used for authentification
+    password - [REQUIRED[STRING] contains the password used for authentification
     method - [REQUIRED][STRING] contains the name of the method to be called
     id - [REQUIRED][STRING] a unique identifier for the request.
     params - [OPTIONAL][JSON OBJECT] contains the parameters needed for the method call using a json format
