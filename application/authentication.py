@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import request, make_response, jsonify
+import flask.ext.login as login
 from werkzeug.security import check_password_hash
 from application.models import User
 
@@ -47,7 +48,8 @@ class Authentication:
             # Chrome and Firefox issue a preflight OPTIONS request to check
             # Access-Control-* headers, and will fail if it returns 401.
             if request.method != 'OPTIONS':
-                if not (Authentication.check_authorization_dict(request.authorization)
+                if not (login.current_user.is_authenticated()
+                        or Authentication.check_authorization_dict(request.authorization)
                         or Authentication.check_authorization_dict(request.json)):
                     # return 403, not 401 to prevent browsers from displaying the default auth dialog
                     return make_response(jsonify({'Status': 'Unauthorized access.'}), 403)

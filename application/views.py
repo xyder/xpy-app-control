@@ -3,14 +3,14 @@ from flask.ext.admin import AdminIndexView, expose, helpers
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.wtf import Form
 import flask.ext.login as login
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from wtforms.ext.sqlalchemy.orm import model_form
 
 from application import app, db, mapper
 from application.authentication import Authentication
 from application.forms import LoginForm, UserCreateForm, UserEditForm
 from config import ActiveConfig
-from .models import AppItem, User
+from .models import AppItem
 
 
 def check_errors():
@@ -86,7 +86,7 @@ class AdminUserModelView(AdminModelView):
 
 # application endpoints
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     """
     Generates the main page and the automatic form using a generic AppItem object
@@ -100,7 +100,21 @@ def index():
     app_item = AppItem()
     # crates a model class from the application item
     app_item_form = model_form(AppItem, db.session, base_class=Form, field_args=app_item.field_args)
-    return render_template('index.html', params=params, form=app_item_form(obj=app_item), app_config=ActiveConfig)
+
+    login_form = LoginForm(request.form)
+    if helpers.validate_form_on_submit(login_form):
+        user = login_form.get_user()
+        login.login_user(user)
+        params['retry_login'] = False
+    else:
+        if login_form.errors:
+            params['retry_login'] = True
+
+    return render_template('index.html',
+                           params=params,
+                           form=app_item_form(obj=app_item),
+                           login_form=login_form,
+                           app_config=ActiveConfig)
 
 
 @app.route('/rpc', methods=['POST'])

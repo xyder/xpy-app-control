@@ -1,4 +1,4 @@
-{% from 'macros.html' import render_field, flash_messages %}
+{% from 'macros.html' import render_bound_field, render_errors, flash_messages %}
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -11,7 +11,9 @@
     <!-- data-main attribute tells require.js to load scripts/main.js after require.js loads. -->
     <script data-main="{{ url_for('static', filename='js/main.js') }}"
             src="{{ url_for('static', filename='libs/require.js') }}"></script>
-
+    <script>
+        server_params = {{ params|tojson }};
+    </script>
 </head>
 <body>
     <!-- container for the server and auth status strip -->
@@ -46,12 +48,12 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar_main_menu">
                 <div class="nav navbar-form navbar-right btn-group">
-                    <a id="refresh_switch" class="btn btn-default navbar-btn btn-default-toggle" data-bind="click: toggle_refresh">Toggle Refresh</a>
+                    <a id="refresh_switch" class="btn btn-default navbar-btn active">Toggle Refresh</a>
                     <a class="btn btn-default navbar-btn" href="/admin">Admin</a>
                     {% if current_user.is_authenticated() %}
                         <a class="btn btn-default navbar-btn" href="/admin/logout" >Logout</a>
                     {% else %}
-                        <a class="btn btn-default navbar-btn" href="/admin/login" >Login</a>
+                        <a id="login_button" class="btn btn-default navbar-btn">Login</a>
                     {% endif %}
                 </div>
             </div><!-- /.navbar-collapse -->
@@ -159,7 +161,7 @@
                 </div>
                 <div class="modal-body">
                     {% for field in form if field.widget.input_type != 'hidden' %}
-                        {{ render_field(field) }}
+                        {{ render_bound_field(field) }}
                     {% endfor %}
                 </div>
                 <div class="modal-footer">
@@ -177,21 +179,23 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="login_label">Sign In</h4>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="control-label" for="input_username">Username</label>
-                            <input class="form-control" type="text" id="input_username" data-bind="value: username" placeholder="Username">
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="input_password">Password</label>
-                            <input class="form-control" type="password" id="input_password" data-bind="value: password, valueUpdate: 'afterkeyup', event:{keypress: key_event}" placeholder="Password">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bind="click: login" data-dismiss="modal" aria-hidden="true">Sign In</button>
-                </div>
+                <form method="POST" action="">
+                    <div class="modal-body">
+                    {{ login_form.hidden_tag() if login_form.hidden_tag }}
+                        {% for f in login_form if f.type != 'CSRFTokenField' %}
+                            <div class="control-group">
+                                {{ f.label(**{'class':'control-label'}) }}
+                                {{ f(**{'class':'form-control', 'placeholder':f.label.text}) }}
+                            </div>
+                            <div>
+                                {{ render_errors(f) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" aria-hidden="true">Sign In</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

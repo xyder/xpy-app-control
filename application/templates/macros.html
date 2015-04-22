@@ -1,8 +1,8 @@
 <!-- macro that will automatically create a form-->
-{% macro render_field(field) %}
+{% macro render_bound_field(field) %}
     <div class="control-group">
         {% if field.widget.input_type != 'checkbox' %}
-            {{ field.label(**{'class':'control-label', 'for': field.name }) }}
+            {{ field.label(**{'class':'control-label'}) }}
             {{ field(**{'class': 'form-control', 'data-bind': 'value: ' + field.name, 'placeholder': field.label.text })|safe }}
         {% else %}
             <div class="checkbox">
@@ -25,4 +25,14 @@
             </ul>
         {% endif %}
     {% endwith %}
+{% endmacro %}
+
+{% macro render_errors(field) %}
+    {% if field.errors %}
+        <ul style="list-style-type: none;">
+            {% for e in field.errors %}
+                <li class="alert alert-warning" role="alert">{{ e }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endmacro %}

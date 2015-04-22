@@ -12,8 +12,6 @@ require.config({
         komapping: '../libs/knockout.mapper',
         bootstrap: '../libs/bootstrap-3.3.2-dist/js/bootstrap',
         controller: 'AppController' + timestamp,
-        ServerViewModel: 'ServerViewModel' + timestamp,
-        LoginViewModel: 'LoginViewModel' + timestamp,
         AddEditViewModel: 'AddEditViewModel' + timestamp,
         AppsViewModel: 'AppsViewModel' + timestamp
     },
@@ -31,15 +29,16 @@ require.config({
 /***
  * main application function
  */
-require([   'jquery', 'knockout', 'komapping', 'controller', 'ServerViewModel',
-            'LoginViewModel', 'AppsViewModel', 'bootstrap'],
-    function($, ko, komapping, AppController, ServerViewModel, LoginViewModel){
+require([   'jquery', 'knockout', 'komapping', 'controller', 'AppsViewModel', 'bootstrap'],
+    function($, ko, komapping, AppController){
         var XPyAC = new AppController();
 
         // execute when document is loaded
         $(document).ready(function () {
+            // fetch server params from page
+            XPyAC.server_params = window.server_params;
+
             // set up a 1024 number multiple formatter to round RAM values
-            //noinspection JSUnusedLocalSymbols
             ko.extenders.numeric = function(target){
                 var suff = "K";
                 var n = target();
@@ -51,19 +50,23 @@ require([   'jquery', 'knockout', 'komapping', 'controller', 'ServerViewModel',
                 return n.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, " ") + " " + suff;
             };
 
-            // initialize the view models
-            var loginViewModel = new LoginViewModel(XPyAC);
-            var serverViewModel = new ServerViewModel(XPyAC);
-
             // set up the login dialog
             var login_dialog = $('#login');
             login_dialog.on('shown.bs.modal', function () {
                 $('#input_username').focus();
             });
 
-            // bind the knockout view models to the page elements
-            ko.applyBindings(loginViewModel, login_dialog[0]);
-            ko.applyBindings(serverViewModel, $('#navbar_main_menu')[0]);
+            // wire button events
+            $('#login_button').click(function(){
+               login_dialog.modal('show');
+            });
+
+            $('#refresh_switch').click(XPyAC.toggle_refresh);
+
+            // show login dialog if server sent a retry flag
+            if(XPyAC.server_params.retry_login){
+                login_dialog.modal('show');
+            }
 
             // set up the periodic refresh function
             XPyAC.auto_refresh();

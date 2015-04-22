@@ -27,6 +27,8 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         self.RPC_STOP_PROCESS = self.RPC_BASE + 'stop_process';
         self.RPC_CHECK_AUTH = self.RPC_BASE + 'check_auth';
 
+        self.server_params = {};
+
         /***
          * Sets the server status html accordingly
          *
@@ -92,6 +94,14 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         };
 
         /***
+         * Toggles the automatic refreshing of the lists.
+         */
+        self.toggle_refresh = function(){
+            self.is_refreshing = !self.is_refreshing;
+            $('#refresh_switch').toggleClass('active', self.is_refreshing);
+        };
+
+        /***
          * Performs an ajax call to the specified uri with the given method and data
          * @param uri path to be used in the ajax call
          * @param method http method to be used
@@ -132,6 +142,9 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
             });
         };
 
+        /***
+         * Performs a specialized ajax call for a RPC API
+         */
         self.run_rpc_method = function(method, params){
             var req_object = {
                 'id': Math.floor(Math.random()*1001),
@@ -141,15 +154,6 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
                 req_object.params = params;
             }
             return self.ajax(self.RPC_URL, 'POST', req_object);
-        };
-
-        /***
-         * Sets login information and requests server to validate the authentication
-         */
-        self.login = function (username, password) {
-            self.username = username;
-            self.password = password;
-            self.run_rpc_method(self.RPC_CHECK_AUTH);
         };
     };
 });
