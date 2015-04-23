@@ -181,7 +181,7 @@
                 </div>
                 <form method="POST" action="">
                     <div class="modal-body">
-                    {{ login_form.hidden_tag() if login_form.hidden_tag }}
+                        {{ login_form.hidden_tag() if login_form.hidden_tag }}
                         {% for f in login_form if f.type != 'CSRFTokenField' %}
                             <div class="control-group">
                                 {{ f.label(**{'class':'control-label'}) }}
@@ -196,6 +196,22 @@
                         <button type="submit" class="btn btn-primary" aria-hidden="true">Sign In</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- prompt for a question -->
+    <div id="ask_dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ask_dialog_label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="ask_dialog_label">Question!</h4>
+                    </div>
+                    <div id="ask_dialog_message" class="modal-body"></div>
+                    <div class="modal-footer">
+                        <button type="submit" data-dismiss="modal" class="btn btn-primary" aria-hidden="true" id="ask_dialog_confirm">Confirm</button>
+                        <button type="submit" data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
+                    </div>
             </div>
         </div>
     </div>

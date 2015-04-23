@@ -50,15 +50,15 @@ class AppResource(Resource):
             abort(404, message="App {} doesn't exist.".format(id_app))
         return app_item
 
-    @staticmethod
     @Authentication.login_required
-    def delete(id_app):
+    def delete(self, id_app):
         """
         Endpoit that responds to a DELETE request and removes a specified application item from the
         database.
 
         :param id_app: The id of the specified application item.
         """
+
         app_item = AppItem.query.get(id_app)
         if not app_item:
             abort(404, message="App {} doesn't exist.".format(id_app))

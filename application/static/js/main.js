@@ -50,22 +50,11 @@ require([   'jquery', 'knockout', 'komapping', 'controller', 'AppsViewModel', 'b
                 return n.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, " ") + " " + suff;
             };
 
-            // set up the login dialog
-            var login_dialog = $('#login');
-            login_dialog.on('shown.bs.modal', function () {
-                $('#input_username').focus();
-            });
-
-            // wire button events
-            $('#login_button').click(function(){
-               login_dialog.modal('show');
-            });
-
             $('#refresh_switch').click(XPyAC.toggle_refresh);
 
             // show login dialog if server sent a retry flag
             if(XPyAC.server_params.retry_login){
-                login_dialog.modal('show');
+                XPyAC.prompt_login(true);
             }
 
             // set up the periodic refresh function

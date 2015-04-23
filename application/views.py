@@ -29,9 +29,12 @@ class AdminMainView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        check_errors()
+
+        # prevent unauthorized access
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view', next=request.url))
+
+        check_errors()
         return super(AdminMainView, self).index()
 
     @expose('/login', methods=('GET', 'POST'))
@@ -42,7 +45,9 @@ class AdminMainView(AdminIndexView):
             login.login_user(user)
 
         if login.current_user.is_authenticated():
-            return redirect(request.args.get('next') or '/')
+            return redirect(request.args.get('next') or '/admin')
+
+        check_errors()
 
         self._template_args['form'] = req_form
         return super(AdminMainView, self).index()
@@ -94,8 +99,6 @@ def index():
     :return: the template to be served to the client
     """
 
-    check_errors()
-
     params = {'title': 'Main'}
     app_item = AppItem()
     # crates a model class from the application item
@@ -106,9 +109,16 @@ def index():
         user = login_form.get_user()
         login.login_user(user)
         params['retry_login'] = False
+
+        # redirect to prevent form double submit
+        return redirect(request.url)
     else:
         if login_form.errors:
             params['retry_login'] = True
+
+    params['is_authenticated'] = login.current_user.is_authenticated()
+
+    check_errors()
 
     return render_template('index.html',
                            params=params,

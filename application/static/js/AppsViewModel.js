@@ -48,6 +48,10 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
          * triggers and add or an edit operation
          */
         self.add_edit = function() {
+            if(!self.controller.server_params.is_authenticated){
+                self.controller.prompt_login(true);
+                return;
+            }
             // checking if 'this' is called from the parent
             if(this == self){
                 self.addVM.fetch_item();
@@ -67,8 +71,17 @@ define([ 'jquery', 'knockout', 'komapping', 'AddEditViewModel' ], function($, ko
          */
         self.remove = function () {
             if(is_item(this)){
-                // noinspection JSUnresolvedFunction
-                self.controller.ajax(this.app_item().url(), 'DELETE').done(self.update);
+                if(!self.controller.server_params.is_authenticated) {
+                    self.controller.prompt_login(true);
+                    return;
+                }
+
+                var url = this.app_item().url();
+                // delete any previously installed events
+                self.controller.ask_question('Are you sure you want to delete this item?', function(){
+                    // noinspection JSUnresolvedFunction
+                    self.controller.ajax(url, 'DELETE').done(self.update);
+                });
             } else {
                 console.error('The calling object is not an item of this array.');
             }

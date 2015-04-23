@@ -6,9 +6,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
     ko.mapper = komapping;
     return function(){
         var self = this;
-    
-        self.username = '';
-        self.password = '';
+
         // flag that specifies if the user is logged in
         self.is_logged_in = false;
         // flag that specifies if the client will perform a refresh
@@ -29,6 +27,22 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
 
         self.server_params = {};
 
+        // init the login
+        self.login_dialog = $('#login');
+        $('#login_button').click(function(){
+            self.prompt_login(true);
+        });
+
+        // set the auto-focus when shown
+        self.login_dialog.on('shown.bs.modal', function(){
+            $('#username').focus();
+        });
+
+        // init the ask dialog
+        self.ask_dialog = $('#ask_dialog');
+        self.ask_dialog_message = $('#ask_dialog_message');
+        self.ask_dialog_confirm = $('#ask_dialog_confirm');
+
         /***
          * Sets the server status html accordingly
          *
@@ -41,6 +55,24 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
                 .toggleClass('label-success', val)
                 .css('color', val ? 'black' : 'inherit');
         };
+
+        /***
+         * Shows or hides the login dialog.
+         */
+        self.prompt_login = function(val){
+            self.login_dialog.modal(val ? 'show' : 'hide');
+        };
+
+        /***
+         * Prompts for confirmation and executes callback if confirmed.
+         */
+        self.ask_question = function(message, callback){
+            self.ask_dialog_message.html(message);
+            self.ask_dialog_confirm
+                .off('click')
+                .on('click', callback);
+            self.ask_dialog.modal('show');
+        }
 
         /***
          * refreshes the app list and timestamp and all relevant page elements
@@ -109,17 +141,13 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
          * @returns the return value from the jquery ajax call
          */
         self.ajax = function (uri, method, data) {
-            return $.ajax({
+            var ajax_params = {
                 url: uri,
                 type: method,
-                contentType: 'application/json',
                 accepts: 'application/json',
                 cache: false,
                 dataType: 'json',
                 data: JSON.stringify(data),
-                headers: {
-                    'Authorization': 'Basic ' + btoa(self.username + ':' + self.password)
-                },
                 timeout: 1000,
                 statusCode: {
                     // success
@@ -129,7 +157,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
                     // unauthorized
                     403: function(jqXHR){
                         if (jqXHR.status == 403) {
-                            $('#login').modal('show');
+                            self.prompt_login(true)
                         } else {
                             console.log('Ajax error code: ' + jqXHR.status);
                         }
@@ -139,7 +167,13 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
                         self.set_server_status(false)
                     }
                 }
-            });
+            };
+
+            // filter DELETE methods out because they can't have application/json content-type
+            if (method !== 'DELETE'){
+                ajax_params['contentType'] = 'application/json';
+            }
+            return $.ajax(ajax_params);
         };
 
         /***
