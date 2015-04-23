@@ -1,20 +1,50 @@
-<!-- macro that will automatically create a form-->
-{% macro render_bound_field(field) %}
+{# Renders a field bound and relevant knockout binding. #}
+{% macro render_bound_field(f) %}
     <div class="control-group">
-        {% if field.widget.input_type != 'checkbox' %}
-            {{ field.label(**{'class':'control-label'}) }}
-            {{ field(**{'class': 'form-control', 'data-bind': 'value: ' + field.name, 'placeholder': field.label.text })|safe }}
-        {% else %}
-            <div class="checkbox">
-                <label>
-                    {{ field(**{'data-bind': 'checked: ' + field.name })|safe }}
-                    {{ field.label }}
-                </label>
-            </div>
-        {% endif %}
+    {% if f.widget.input_type != 'checkbox' %}
+        {{ f.label(**{'class':'control-label'}) }}
+        {{ f(**{'class': 'form-control', 'data-bind': 'value: ' + f.name, 'placeholder': f.label.text })|safe }}
+    {% else %}
+        <div class="checkbox">
+            <label>
+                {{ f(**{'data-bind': 'checked: ' + f.name })|safe }}
+                {{ f.label }}
+            </label>
+        </div>
+    {% endif %}
+    </div>
+    <div>
+        {{ render_errors(f) }}
     </div>
 {% endmacro %}
 
+{# Renders a form field. #}
+{% macro render_field(f) %}
+    <div class="control-group">
+        {{ f.label(**{'class':'control-label'}) }}
+        {{ f(**{'class':'form-control', 'placeholder':f.label.text}) }}
+    </div>
+    <div>
+        {{ render_errors(f) }}
+    </div>
+{% endmacro %}
+
+{# Renders a form with knockout bindings. #}
+{% macro render_bound_form_fields(form) %}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {{ render_bound_field(field) }}
+    {% endfor %}
+{% endmacro %}
+
+{# Renders a form. #}
+{% macro render_form_fields(form) %}
+    {{ form.hidden_tag() if form.hidden_tag }}
+    {% for f in form if f.type != 'CSRFTokenField' %}
+        {{ render_field(f) }}
+    {% endfor %}
+{% endmacro %}
+
+{# Renders flashed messages. #}
 {%  macro flash_messages() %}
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -27,6 +57,7 @@
     {% endwith %}
 {% endmacro %}
 
+{# Renders form field errors. #}
 {% macro render_errors(field) %}
     {% if field.errors %}
         <ul style="list-style-type: none;">
@@ -35,4 +66,32 @@
             {% endfor %}
         </ul>
     {% endif %}
+{% endmacro %}
+
+{# Renders a dialog with given id, label and body.
+        If show_form_tag is true it will encase the modal body and footer in a form tag.
+        If classic_submit is true it will not add a modal data-dismiss attribute to the submit button. #}
+{% macro render_dialog(id_dialog, label, body, show_form_tag, classic_submit) %}
+    <div id="{{ id_dialog }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="{{ id_dialog }}_label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="{{ id_dialog }}_label">{{ label }}</h4>
+                </div>
+            {% if show_form_tag %}
+                <form method="POST" action="">
+            {% endif %}
+                <div id="{{ id_dialog }}_body" class="modal-body">
+                    {{ body }}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" {{ 'data-dismiss=modal' if not classic_submit }} class="btn btn-primary" aria-hidden="true" id="{{ id_dialog }}_confirm">Confirm</button>
+                    <button type="button" data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
+                </div>
+            {% if show_form_tag %}
+                </form>
+            {% endif %}
+            </div>
+        </div>
+    </div>
 {% endmacro %}

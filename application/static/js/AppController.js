@@ -28,7 +28,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
         self.server_params = {};
 
         // init the login
-        self.login_dialog = $('#login');
+        self.login_dialog = $('#login_dialog');
         $('#login_button').click(function(){
             self.prompt_login(true);
         });
@@ -40,7 +40,7 @@ define([ 'jquery', 'knockout', 'komapping', 'AppsViewModel' ], function ($, ko, 
 
         // init the ask dialog
         self.ask_dialog = $('#ask_dialog');
-        self.ask_dialog_message = $('#ask_dialog_message');
+        self.ask_dialog_message = $('#ask_dialog_body');
         self.ask_dialog_confirm = $('#ask_dialog_confirm');
 
         /***

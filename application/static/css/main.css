@@ -2,7 +2,7 @@ body {
     font-family: Tahoma,Geneva,sans-serif;
 }
 
-#apps_table td.success > span.label {
+#apps_table td.success > span.label, #apps_table td.default > span.label {
     color: black;
 }
 
@@ -36,54 +36,4 @@ div.long_cell {
 #header-user {
     float: right;
     width: auto;
-}
-
-.button-wrapper {
-    height: 25px;
-    box-shadow: 0 2px 4px gray;
-    display: inline-block;
-    border: 1px solid #094BC0;
-    border-radius: 5px;
-    padding: 1px 5px;
-    background-color: #097BC0;
-    transition: background-color 0.3s 0.05s ease;
-    vertical-align: middle;
-    white-space: nowrap;
-}
-
-.button-wrapper > a, .button-wrapper > input {
-    display: inline-table;
-    cursor: pointer;
-    text-decoration: none;
-    height: 100%;
-    vertical-align: middle;
-}
-
-.button-wrapper > a > h1, .button-wrapper > input {
-    margin: 0 auto;
-    display: table-cell;
-    vertical-align: middle;
-    color: #f7f8f8;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    font-family: Tahoma, Geneva, sans-serif;
-    border: none;
-    background: transparent;
-    transition: color 0.3s 0.05s ease;
-}
-
-.button-wrapper:hover {
-    background-color: #09ddff;
-    transition: background-color 0.3s 0.05s ease;
-    cursor: pointer;
-}
-
-.button-wrapper:hover > a > h1, .button-wrapper:hover > input {
-    color: #094BC0;
-    transition: color 0.3s 0.05s ease;
-}
-
-.button-wrapper > input {
-    height: auto;
 }

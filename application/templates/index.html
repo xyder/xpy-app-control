@@ -1,4 +1,10 @@
-{% from 'macros.html' import render_bound_field, render_errors, flash_messages %}
+{% from 'macros.html' import
+    render_errors,
+    render_dialog,
+    render_bound_form_fields,
+    render_form_fields,
+    flash_messages %}
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -122,7 +128,7 @@
                             <!-- table header -->
                             <thead>
                                 <tr>
-                                    <td>ProcessId</td>
+                                    <td>Process Id</td>
                                     <td>Name</td>
                                     <td>Executable Path</td>
                                     <td>Command Line</td>
@@ -149,71 +155,14 @@
             </tbody>
         </table>
     </div>
+
     <!-- dialog for add/edit application operations -->
-    <div id="add" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDialogLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title" id="add_dialog_label"></h4>
-                </div>
-                <div class="modal-body">
-                    {% for field in form if field.widget.input_type != 'hidden' %}
-                        {{ render_bound_field(field) }}
-                    {% endfor %}
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bind="click: callback">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{ render_dialog('add_dialog', '', render_bound_form_fields(form)) }}
 
     <!-- dialog for login operation -->
-    <div id="login" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="login_label" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="login_label">Sign In</h4>
-                </div>
-                <form method="POST" action="">
-                    <div class="modal-body">
-                        {{ login_form.hidden_tag() if login_form.hidden_tag }}
-                        {% for f in login_form if f.type != 'CSRFTokenField' %}
-                            <div class="control-group">
-                                {{ f.label(**{'class':'control-label'}) }}
-                                {{ f(**{'class':'form-control', 'placeholder':f.label.text}) }}
-                            </div>
-                            <div>
-                                {{ render_errors(f) }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" aria-hidden="true">Sign In</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    {{ render_dialog('login_dialog', 'Sign in', render_form_fields(login_form), true, true) }}
 
     <!-- prompt for a question -->
-    <div id="ask_dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ask_dialog_label" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="ask_dialog_label">Question!</h4>
-                    </div>
-                    <div id="ask_dialog_message" class="modal-body"></div>
-                    <div class="modal-footer">
-                        <button type="submit" data-dismiss="modal" class="btn btn-primary" aria-hidden="true" id="ask_dialog_confirm">Confirm</button>
-                        <button type="submit" data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
-                    </div>
-            </div>
-        </div>
-    </div>
+    {{ render_dialog('ask_dialog', 'Question:') }}
 </body>
 </html>

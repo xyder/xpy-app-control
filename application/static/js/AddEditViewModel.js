@@ -10,7 +10,11 @@ define([ 'jquery', 'knockout', 'komapping' ], function($, ko, komapping){
         self.is_bound = false;
         self.item = ko.observable();
         self.item_url = undefined;
-        self.dialog = $('#add');
+        self.dialog = $('#add_dialog');
+
+        $('#add_dialog_confirm').on('click', function(){
+            self.commit();
+        });
 
         /***
          * Sends an add or edit request to the server and updates on return.
