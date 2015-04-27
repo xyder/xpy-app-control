@@ -1,3 +1,4 @@
+from werkzeug.security import generate_password_hash
 from wtforms import validators
 from application import db
 from wtforms.widgets import TextInput, PasswordInput
@@ -23,11 +24,12 @@ class User(db.Model):
     username = db.Column(db.Text, unique=True, index=True)
     password = db.Column(db.Text)
 
-    def __init__(self):
-        self.first_name = ''
-        self.last_name = ''
-        self.username = ''
-        self.password = ''
+    def __init__(self, username='', password='', first_name='', last_name=''):
+        # force defaults in case None is sent
+        self.first_name = first_name or ''
+        self.last_name = last_name or ''
+        self.username = username or ''
+        self.password = generate_password_hash(password or '')
 
     def is_authenticated(self):
         return True

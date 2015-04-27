@@ -1,7 +1,6 @@
 from flask.ext.admin import Admin
 from flask.ext.login import LoginManager
 from flask.ext.restful import Api
-from werkzeug.security import generate_password_hash
 from application import db, views, models
 from config import ActiveConfig
 
@@ -16,13 +15,7 @@ def init_db():
 
     # will append a default user if none exist
     if models.User.query.count() == 0:
-        default_user = models.User()
-
-        default_user.username = 'admin'
-        default_user.password = generate_password_hash('password')
-        default_user.first_name = 'John'
-        default_user.last_name = 'Smith'
-
+        default_user = models.User('admin', 'password', 'John', 'Smith')
         db.session.add(default_user)
         db.session.commit()
 

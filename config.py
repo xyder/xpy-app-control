@@ -20,7 +20,6 @@ class AppConfig(object):
     DEBUG = False
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PathsConfig.BASE_DIR, 'data.sqlite')
-    SQLALCHEMY_MIGRATE_REPO = os.path.join(PathsConfig.BASE_DIR, 'db_repository')
 
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "this is a secret key"
@@ -30,7 +29,7 @@ class AppConfig(object):
     REST_URL_APPS_LIST = REST_URL_APPS + '/list'
     REST_URL_APPS_ITEM = REST_URL_APPS + '/<id_app>'
 
-    APP_NAME = 'Application Control'
+    APP_NAME = 'XPy Application Control'
 
 
 class TestingConfig(AppConfig):
