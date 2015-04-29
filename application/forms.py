@@ -5,7 +5,32 @@ from wtforms.ext.sqlalchemy.orm import model_form
 from application.models import User
 
 
-class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_name'],
+class BaseForm(Form):
+    """
+    Base class for forms.
+    """
+
+    def __init__(self, *args, **kwargs):
+        field_order = getattr(self, 'field_order', None)
+
+        # re-order the fields in the order specified
+        if field_order:
+            temp_fields = []
+
+            for name in field_order:
+                if name == '*':
+                    # all fields not specified
+                    temp_fields.extend([f for f in self._unbound_fields if f[0] not in field_order])
+                else:
+                    # all fields specified
+                    temp_fields.append([f for f in self._unbound_fields if f[0] == name][0])
+            self._unbound_fields = temp_fields
+        super(BaseForm, self).__init__(*args, **kwargs)
+
+
+class LoginForm(model_form(User,
+                           base_class=BaseForm,
+                           exclude=['first_name', 'last_name'],
                            field_args=User.get_field_args_login())):
     """
     Class representing the form handling authentication in the admin area.
@@ -33,12 +58,15 @@ class LoginForm(model_form(User, base_class=Form, exclude=['first_name', 'last_n
         return User.query.filter_by(username=self.username.data).first()
 
 
-class UserEditForm(model_form(User, base_class=Form, field_args=User.get_field_args(True))):
+class UserEditForm(model_form(User,
+                              base_class=BaseForm,
+                              field_args=User.get_field_args(True))):
     """
     Class representing the form handling the user editing from the admin area.
     """
 
     confirm = PasswordField('Repeat Password')
+    field_order = ('first_name', 'last_name', 'username', 'password', 'confirm', '*')
 
     def __init__(self, obj=None, *args, **kwargs):
 
@@ -65,6 +93,3 @@ class UserCreateForm(model_form(User, base_class=UserEditForm, field_args=User.g
     """
     Class representing the form handling the user creating from the admin area.
     """
-
-    # repeating this places the confirm field after the form
-    confirm = PasswordField('Repeat Password')
