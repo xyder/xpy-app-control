@@ -31,13 +31,16 @@ class User(db.Model):
         self.username = username or ''
         self.password = generate_password_hash(password or '')
 
-    def is_authenticated(self):
+    @staticmethod
+    def is_authenticated():
         return True
 
-    def is_active(self):
+    @staticmethod
+    def is_active():
         return True
 
-    def is_anonymous(self):
+    @staticmethod
+    def is_anonymous():
         return False
 
     def get_id(self):
@@ -61,19 +64,22 @@ class User(db.Model):
         }
 
     @staticmethod
-    def get_field_args_create():
+    def get_field_args(is_editing=False):
         """
         Gets the field arguments for the automatic form creation.
         """
-        return {
-            User.first_name.key: {'widget': CustomTextWidget(), 'label': 'First Name'},
-            User.last_name.key: {'widget': CustomTextWidget(), 'label': 'Last Name'},
-            User.username.key: {'widget': CustomTextWidget(), 'label': 'Username',
-                                'validators': [validators.DataRequired()]},
-            User.password.key: {'widget': PasswordInput(), 'label': 'Password',
-                                'validators': [validators.DataRequired(),
-                                               validators.EqualTo('confirm', message='Password must match.')]}
-        }
+
+        fields = User.get_field_args_login()
+        fields[User.first_name.key] = {'widget': CustomTextWidget(), 'label': 'First Name'}
+        fields[User.last_name.key] = {'widget': CustomTextWidget(), 'label': 'Last Name'}
+
+        match_validator = validators.EqualTo('confirm', message='Password must match.')
+        if is_editing:
+            fields[User.password.key]['validators'] = [validators.Optional(), match_validator]
+        else:
+            fields[User.password.key]['validators'].append(match_validator)
+
+        return fields
 
     @property
     def get_full_name(self):
