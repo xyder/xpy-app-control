@@ -1,10 +1,11 @@
 from flask.ext.restful import Resource, fields, marshal_with
+
 import subprocess
-from psutil import Process
 import psutil
-from application.libs.helper_functions import fields_str_from_keys, str_to_pair
-from application.models import AppItem
-from application.resources import app_fields_extended
+
+from application.utils.helper_functions import fields_str_from_keys, str_to_pair
+from application import models
+from . import app_fields_extended
 
 
 class AppListResource(Resource):
@@ -103,7 +104,7 @@ class AppListResource(Resource):
         proc_list = AppListResource.parse_process_list()
         items = []
         # fetch the appitem list from the database
-        apps = AppItem.query.all()
+        apps = models.AppItem.query.all()
         # initialize the return array
         for app_item in apps:
             items.append({
@@ -120,7 +121,7 @@ class AppListResource(Resource):
                 if item['app_item'].compare_process(proc):
                     # Store RAM usage in KB, per process and an application wide total.
                     try:
-                        proc['ProcMem'] = Process(int(proc['ProcessId'])).get_memory_info()[0] / 1024
+                        proc['ProcMem'] = psutil.Process(int(proc['ProcessId'])).get_memory_info()[0] / 1024
                     except psutil.NoSuchProcess:
                         proc['ProcMem'] = 0
                     item['proc_mem_total'] += proc['ProcMem']

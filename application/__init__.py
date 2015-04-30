@@ -3,9 +3,6 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from jsonrpc2 import JsonRpc
 
-from application.libs.helper_functions import register_class_to_rpc
-from application.rpc_server import RPCServer
-
 from config import ActiveConfig
 
 # initialize and configure the flask server
@@ -21,12 +18,12 @@ db = SQLAlchemy(app)
 
 # initialize rpc mapper
 mapper = JsonRpc()
-register_class_to_rpc(RPCServer, mapper)
 
-from application import models, views
-from application.initializers import init_db, init_admin, init_login, init_rest
+from application.views import main_views
+from application.utils.initializers import init_db, init_admin, init_login, init_rest, init_rpc
 
-init_db()
-init_admin(app)
+init_db(db)
+init_admin(app, db)
 init_login(app)
 init_rest(app)
+init_rpc(mapper)

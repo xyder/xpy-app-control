@@ -1,11 +1,14 @@
 from flask.ext.admin import Admin
 from flask.ext.login import LoginManager
 from flask.ext.restful import Api
-from application import db, views, models
+
+from application import views, models
+from application.utils import RPCServer
+from application.utils.helper_functions import register_class_to_rpc
 from config import ActiveConfig
 
 
-def init_db():
+def init_db(db):
     """
     Initializes data in the database if necessary.
     """
@@ -36,17 +39,18 @@ def init_login(app_):
         return models.User.query.get(user_id)
 
 
-def init_admin(app_):
+def init_admin(app, db):
     """
     Initializes flask-admin related objects.
 
-    :param app_: The Flask instance.
+    :param app: The Flask instance.
     """
 
-    admin = Admin(app_, ActiveConfig.APP_NAME, index_view=views.AdminMainView())
+    admin = Admin(app, ActiveConfig.APP_NAME, index_view=views.admin_views.AdminMainView())
 
-    admin.add_view(views.AdminModelView(models.AppItem, db.session, name='Applications'))
-    admin.add_view(views.AdminUserModelView(models.User, db.session, name='Users'))
+    # register admin views
+    admin.add_view(views.admin_views.AdminModelView(models.AppItem, db.session, name='Applications'))
+    admin.add_view(views.admin_views.AdminUserModelView(models.User, db.session, name='Users'))
 
 
 def init_rest(app_):
@@ -56,14 +60,15 @@ def init_rest(app_):
     :param app_: The Flask instance.
     """
 
-    from application.resources.app_resource import AppResource
-    from application.resources.app_list_resource import AppListResource
-
     rest_api = Api(app_)
-    rest_api.add_resource(AppListResource,
+    rest_api.add_resource(views.rest_resources.AppListResource,
                           ActiveConfig.REST_URL_APPS_LIST,
                           ActiveConfig.REST_URL_APPS_LIST + '/')
-    rest_api.add_resource(AppResource,
+    rest_api.add_resource(views.rest_resources.AppResource,
                           ActiveConfig.REST_URL_APPS_ITEM,
                           ActiveConfig.REST_URL_APPS,
                           ActiveConfig.REST_URL_APPS + '/')
+
+
+def init_rpc(mapper):
+    register_class_to_rpc(RPCServer, mapper)

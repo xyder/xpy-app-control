@@ -1,8 +1,10 @@
 from functools import wraps
+
 from flask import request, make_response, jsonify
 import flask.ext.login as login
 from werkzeug.security import check_password_hash
-from application.models import User
+
+from application import models
 
 
 class Authentication:
@@ -18,7 +20,7 @@ class Authentication:
         :return: True if valid.
         """
 
-        user = User.query.filter_by(username=username).first()
+        user = models.User.query.filter_by(username=username).first()
         if user is None or not check_password_hash(user.password, password):
             return False
         return True

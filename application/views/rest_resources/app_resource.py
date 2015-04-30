@@ -1,15 +1,18 @@
 from flask.ext.restful import Resource, abort, marshal_with
-from application import db
-from application.authentication import Authentication
-from application.libs.helper_functions import str_to_bool
-from application.models import AppItem
-from application.resources import app_fields, app_fields_extended, parser
+
+from application import models
+from application.utils import Authentication
+from application.utils.helper_functions import str_to_bool
+from . import app_fields, app_fields_extended, parser
 
 
 class AppResource(Resource):
     """
     Resource class that processes requests for GET, DELETE, PUT and POST for an application item.
     """
+
+    from application import db
+    app_db = db
 
     @staticmethod
     def parse_args_to_app(app_item, parsed_args):
@@ -44,8 +47,8 @@ class AppResource(Resource):
         :return: The specified application item.
         """
         if id_app == 'default' or id_app == '':
-            return AppItem()
-        app_item = AppItem.query.get(id_app)
+            return models.AppItem()
+        app_item = models.AppItem.query.get(id_app)
         if not app_item:
             abort(404, message="App {} doesn't exist.".format(id_app))
         return app_item
@@ -59,11 +62,11 @@ class AppResource(Resource):
         :param id_app: The id of the specified application item.
         """
 
-        app_item = AppItem.query.get(id_app)
+        app_item = models.AppItem.query.get(id_app)
         if not app_item:
             abort(404, message="App {} doesn't exist.".format(id_app))
-        db.session.delete(app_item)
-        db.session.commit()
+        self.app_db.session.delete(app_item)
+        self.app_db.session.commit()
         return {}, 204
 
     @Authentication.login_required
@@ -74,14 +77,14 @@ class AppResource(Resource):
         :param id_app: The id of the specified application item.
         """
         # fetch the application item from the database
-        app_item = AppItem.query.get(id_app)
+        app_item = models.AppItem.query.get(id_app)
         if not app_item:
             abort(404, message="App {} doesn't exist.".format(id_app))
 
         # update the application item with the given arguments
         app_item = AppResource.parse_args_to_app(app_item, parser.parse_args())
-        db.session.add(app_item)
-        db.session.commit()
+        self.app_db.session.add(app_item)
+        self.app_db.session.commit()
         return app_item, 201
 
     @Authentication.login_required
@@ -96,7 +99,7 @@ class AppResource(Resource):
             abort(404, message='Command {} not allowed.'.format(id_app))
 
         # fill the application item with the given arguments
-        app_item = AppResource.parse_args_to_app(AppItem(), parser.parse_args())
-        db.session.add(app_item)
-        db.session.commit()
+        app_item = AppResource.parse_args_to_app(models.AppItem(), parser.parse_args())
+        self.app_db.session.add(app_item)
+        self.app_db.session.commit()
         return app_item, 201

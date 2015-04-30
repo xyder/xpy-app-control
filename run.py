@@ -1,3 +1,3 @@
-from application.qt_tools import main
+from application.utils.qt_tools import main
 
 main()

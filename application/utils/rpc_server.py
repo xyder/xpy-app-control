@@ -1,15 +1,14 @@
 import subprocess
-import application
 
-
-# prepend '_' to function name to make it uncallable
-from application.libs.helper_functions import terminate_process
+from application.utils.helper_functions import terminate_process
+from application import models
 
 
 def create_message(code, message, arg=''):
     return {'code': code, 'message': message % arg if '%s' in message else message}
 
 
+# prepend '_' to function name to make it uncallable
 class RPCServer:
     """
     Class that provides a set of RPCs
@@ -27,7 +26,8 @@ class RPCServer:
         Sends a signal for the thread to terminate.
         """
         print("We're going down..")
-        application.app.thread.exit_signal.emit()
+        from application import app
+        app.thread.exit_signal.emit()
         return RPCServer.SUCCESS_MSG
 
     @staticmethod
@@ -38,7 +38,7 @@ class RPCServer:
         :param app_id: The application item id.
         """
         # fetch the application item
-        app_item = application.models.AppItem.query.get(app_id)
+        app_item = models.AppItem.query.get(app_id)
         if app_item is None:
             return RPCServer.APP_NOT_FOUND_MSG
 
@@ -59,7 +59,7 @@ class RPCServer:
 
         # if command not specified, pull list of processes and send sigterm to each
         # fetch the application item
-        app_item = application.models.AppItem.query.get(app_id)
+        app_item = models.AppItem.query.get(app_id)
         if app_item is None:
             return RPCServer.APP_NOT_FOUND_MSG
 
@@ -72,7 +72,7 @@ class RPCServer:
             return RPCServer.SUCCESS_MSG
         else:
             # pull list of processes and send sigterm to each
-            from application.resources.app_list_resource import AppListResource
+            from application.views.rest_resources.app_list_resource import AppListResource
             pids = AppListResource.parse_process_list_for_app(app_item)
             for pid in pids:
                 try:

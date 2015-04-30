@@ -11,6 +11,7 @@ class FlaskThread(QtCore.QThread):
     """
     Class that defines the main flask server thread.
     """
+
     from application import app
     server_app = app
 
