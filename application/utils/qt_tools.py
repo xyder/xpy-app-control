@@ -12,9 +12,6 @@ class FlaskThread(QtCore.QThread):
     Class that defines the main flask server thread.
     """
 
-    from application import app
-    server_app = app
-
     exit_signal = QtCore.Signal()
 
     def __init__(self):
@@ -24,8 +21,8 @@ class FlaskThread(QtCore.QThread):
         """
         Starts the server.
         """
-        self.server_app.thread = self
-        self.server_app.run(use_reloader=False)
+        from application import main
+        main()
 
     def connect_exit_signal_to_slot(self, slot):
         """

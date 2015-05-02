@@ -19,11 +19,12 @@ db = SQLAlchemy(app)
 # initialize rpc mapper
 mapper = JsonRpc()
 
-from application.views import main_views
-from application.utils.initializers import init_db, init_admin, init_login, init_rest, init_rpc
 
-init_db(db)
-init_admin(app, db)
-init_login(app)
-init_rest(app)
-init_rpc(mapper)
+def main():
+    from application.utils.initializers import init_db, init_admin, init_login, init_rest, init_rpc
+    init_db(db)
+    init_admin(app, db)
+    init_login(app)
+    init_rest(app)
+    init_rpc(mapper)
+    app.run(use_reloader=False)
